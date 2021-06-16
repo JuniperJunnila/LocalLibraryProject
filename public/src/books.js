@@ -13,10 +13,9 @@ function partitionBooksByBorrowedStatus(books) {
   ];
 }
 
-function getBorrowersForBook(book, accounts) {
-  const borrowedInsts = book.borrows;
+function getBorrowersForBook({borrows}, accounts) {
   let borrowersArr = accounts.reduce((acc, account) => {
-    for (let inst of borrowedInsts) {
+    for (let inst of borrows) {
       if (inst.id === account.id) {
         account.returned = inst.returned;
         acc.push(account);

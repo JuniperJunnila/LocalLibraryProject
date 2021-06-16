@@ -12,51 +12,47 @@ function getBooksBorrowedCount(books) {
 
 function getMostCommonGenres(books) {
   let genreIndex = {}
-  let genreArr = books.reduce((acc, book)=>{
-    const currentGenre = book.genre
-    if (genreIndex[currentGenre]){
-      acc[genreIndex[currentGenre]].count ++
+  let allGenres = books.map((book)=>book.genre)
+  let genreArr = books.reduce((acc, {genre})=>{
+    if (genreIndex[genre]){
+      acc[genreIndex[genre]].count ++
     } else {
-      genreIndex[currentGenre] = acc.length
-      acc.push({name: currentGenre, count: 1})
+      genreIndex[genre] = acc.length
+      acc.push({name: genre, count: 1})
       return acc
     }
     return acc
   }, [])
-  genreArr.sort((a, b) => b.count - a.count)
-  return genreArr.slice(0, 5)
+  return _sortSlice(genreArr)
 }
 
 function getMostPopularBooks(books) {
-  let titleArr = books.reduce((acc, book)=>{
-    acc.push({name:book.title, count:book.borrows.length})
+  let titleArr = books.reduce((acc, {title, borrows})=>{
+    acc.push({name:title, count:borrows.length})
     return acc
   }, [])
-  titleArr.sort((a, b) => b.count - a.count)
-  titleArr = titleArr.slice(0, 5)
-  return titleArr
+  return _sortSlice(titleArr)
 }
 
 
 function getMostPopularAuthors(books, authors) {
-  let authorArr = authors.reduce((authAcc, author)=>{
-    // const bookFilter = books.filter((book)=>book.authId === author.id)
-    // let authorsHits = bookFilter.map((book) => book.borrows.length)
-    const authorsHits = books.reduce((bookAcc, book)=>{
-      if (book.authorId === author.id){
-        bookAcc += book.borrows.length
+  let authorArr = authors.reduce((authAcc, {id, name:{first, last}})=>{
+    const authorsHits = books.reduce((bookAcc, {authorId, borrows})=>{
+      if (authorId === id){
+        bookAcc += borrows.length
         return bookAcc
       }
       return bookAcc
     }, 0)
-    // const aCount = authorsHits.reduce((acc, hit)=> acc += hit, 0)
-    authAcc.push({name: `${author.name.first} ${author.name.last}`, count: authorsHits})
+    authAcc.push({name: `${first} ${last}`, count: authorsHits})
     return authAcc
   }, [])
-  authorArr.sort((a, b)=> b.count - a.count)
-  console.log(authorArr)
-  authorArr = authorArr.slice(0, 5)
-  return authorArr
+  return _sortSlice(authorArr)
+}
+
+function _sortSlice(arr) {
+  arr.sort((a, b)=> b.count - a.count)
+  return arr.slice(0, 5)
 }
 
 module.exports = {
