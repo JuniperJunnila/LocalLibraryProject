@@ -6,12 +6,8 @@ function sortAccountsByLastName(accounts) {
   return accounts.sort((a, b) => a.name.last.toLowerCase() > b.name.last.toLowerCase()?1:-1)
 }
 
-function getTotalNumberOfBorrows(account, books) {
-  const accountId = account.id
-  return books.filter((book)=>{
-    const borrows = book.borrows
-    return borrows.find((borrow) => borrow.id === accountId)
-  }).length
+function getTotalNumberOfBorrows({id}, books) {
+  return books.filter(({borrows})=> borrows.find((borrow) => borrow.id === id)).length
 }
 
 function getBooksPossessedByAccount(account, books, authors) {
